@@ -3,7 +3,8 @@ public class Main {
     public static void main(String[] args) {
 
 
-        SimulationManager.generateEvents();
+        SimulationManager.generateEvents();     //should set generated Events to true if successful
+
         if(SimulationManager.generatedEvents){
             /// start
             SimulationManager.run();

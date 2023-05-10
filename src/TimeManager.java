@@ -1,16 +1,19 @@
 public class TimeManager {
-    private long startTime;
-    private long endTime;
+    private static long startTime;
+    private static long endTime;
 
-    public void start() {
+    public static void start() {
         startTime = System.currentTimeMillis();
     }
 
-    public void stop() {
+    public static void stop() {
         endTime = System.currentTimeMillis();
     }
 
-    public long getElapsedTimeInSeconds() {
+    public static long getElapsedTimeInSeconds() {
         return (endTime - startTime) / 1000;
+    }
+    public static long getElapsedTimeInMilliSeconds() {
+        return (endTime - startTime);
     }
 }

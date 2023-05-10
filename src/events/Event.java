@@ -12,9 +12,12 @@ public class Event {
         this.carID=carID;
         this.numberOfPeopleInCar=numberOfPeopleInCar;
         this.eventClass=eventClass;
+        System.out.println(this);
     }
 
     public void processEvent(){
+        System.out.println("Processed " + this);
+        /*
         if(eventClass.isAssignableFrom(ArrivingAtTheTestStation.class)){
 
             ArrivingAtTheTestStation arrivingAtTheTestStation= (ArrivingAtTheTestStation) this;
@@ -30,6 +33,18 @@ public class Event {
         }else{
             throw new IllegalStateException("The Eventclass you want to process is not defined");
         }
+        */
+
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "timestampOfExecution=" + timestampOfExecution +
+                ", carID=" + carID +
+                ", numberOfPeopleInCar=" + numberOfPeopleInCar +
+                ", eventClass=" + eventClass +
+                '}';
     }
 
     public int getTimestampOfExecution() {
@@ -54,5 +69,13 @@ public class Event {
 
     public void setNumberOfPeopleInCar(int numberOfPeopleInCar) {
         this.numberOfPeopleInCar = numberOfPeopleInCar;
+    }
+
+    public Class<? extends Event> getEventClass() {
+        return eventClass;
+    }
+
+    public void setEventClass(Class<? extends Event> eventClass) {
+        this.eventClass = eventClass;
     }
 }
