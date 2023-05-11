@@ -1,3 +1,5 @@
+package Utils;
+
 public class TimeManager {
     private static long startTime;
     private static long endTime;
@@ -10,10 +12,13 @@ public class TimeManager {
         endTime = System.currentTimeMillis();
     }
 
-    public static long getElapsedTimeInSeconds() {
-        return getElapsedTimeInMilliSeconds() / 1000;
-    }
     public static long getElapsedTimeInMilliSeconds() {
         return (System.currentTimeMillis() - startTime);
+    }
+    public static int getElapsedTimeInScaledTime(){
+        return (int)((System.currentTimeMillis()- startTime)/10);
+    }
+    public static long formatTimeFromMilliSecondsToSeconds (long milliseconds){
+        return milliseconds/10;
     }
 }

@@ -1,3 +1,5 @@
+import simManagement.SimulationManager;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -5,7 +7,7 @@ public class Main {
 
         SimulationManager.generateEvents();     //should set generated Events to true if successful
 
-        if(SimulationManager.generatedEvents){
+        if(SimulationManager.isGeneratedEvents()){
             /// start
             System.out.println("Starting Sim Run");
             SimulationManager.run();

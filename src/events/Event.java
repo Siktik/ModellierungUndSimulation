@@ -1,17 +1,17 @@
-import events.ArrivingAtTheTestStation;
-import events.LeavingTheStation;
-import events.Testing;
+package events;
+
+import Utils.TimeManager;
 
 import java.util.PriorityQueue;
 
 public class Event {
 
-    private int timestampOfExecution;
+    private long timestampOfExecution;
     private int carID;
     private int numberOfPeopleInCar;
     private Class<?extends Event> eventClass;
 
-    public Event(int timestampOfExecution, int carID, int numberOfPeopleInCar, Class<?extends Event> eventClass){
+    public Event(long timestampOfExecution, int carID, int numberOfPeopleInCar, Class<?extends Event> eventClass){
         this.timestampOfExecution= timestampOfExecution;
         this.carID=carID;
         this.numberOfPeopleInCar=numberOfPeopleInCar;
@@ -28,23 +28,24 @@ public class Event {
 
         }else if(eventClass.isAssignableFrom(Testing.class)){
 
+
             Testing testing= (Testing) this;
             return testing.process(eventList);
 
         }else if(eventClass.isAssignableFrom(LeavingTheStation.class)){
 
-            System.err.println("Wrong place, Events of this type are only added and deleted anyway there is nothing to process");
+            LeavingTheStation leavingTheStation= (LeavingTheStation) this;
+            return leavingTheStation.process(eventList);
 
         }else{
             throw new IllegalStateException("The EventClass you want to process is not defined");
         }
 
-        throw new IllegalStateException("Well... take a look at the code");
     }
 
     @Override
     public String toString() {
-        return "Event{" +
+        return "events.Event{" +
                 "timestampOfExecution=" + timestampOfExecution +
                 ", carID=" + carID +
                 ", numberOfPeopleInCar=" + numberOfPeopleInCar +
@@ -52,7 +53,7 @@ public class Event {
                 '}';
     }
 
-    public int getTimestampOfExecution() {
+    public long getTimestampOfExecution() {
         return timestampOfExecution;
     }
 
