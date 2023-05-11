@@ -1,3 +1,7 @@
+import events.ArrivingAtTheTestStation;
+import events.Event;
+import events.LeavingTheStation;
+
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,7 +17,7 @@ public class SimulationManager {
 
     /*
          nach jeder add und remove operation wird passend sortiert
-         wo werden Testing und Leaving gespeichert? müssen die überhaupt gespeichert werden
+         wo werden events.Testing und Leaving gespeichert? müssen die überhaupt gespeichert werden
      */
     private static List<Event> allArrivingEvents;
     static PriorityQueue<Event> eventList= new PriorityQueue<>(new Comparator<Event>() {

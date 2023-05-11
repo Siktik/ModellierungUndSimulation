@@ -1,3 +1,7 @@
+import events.ArrivingAtTheTestStation;
+import events.LeavingTheStation;
+import events.Testing;
+
 import java.util.PriorityQueue;
 
 public class Event {
