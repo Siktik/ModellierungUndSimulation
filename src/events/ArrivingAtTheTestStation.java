@@ -15,16 +15,12 @@ public class ArrivingAtTheTestStation extends Event {
 
     //processEvent
     public PriorityQueue<Event> process(PriorityQueue<Event> eventList){
-        if(SimulationManager.queuedArrivals.size() < SimulationManager.getMaxQueueSize()) {
 
-            SimulationManager.queuedArrivals.add(this);
-                if(SimulationManager.getCurrentState() == SimulationManager.currentStateEnum.IDLE){
 
-                    ArrivingAtTheTestStation arrivingAtTheTestStation= SimulationManager.queuedArrivals.remove(0);
-                    eventList.add(new Testing(TimeManager.getElapsedTimeInMilliSeconds(), arrivingAtTheTestStation.getCarID(), arrivingAtTheTestStation.getNumberOfPeopleInCar()));
+        if(SimulationManager.getQueueCounter() < SimulationManager.getMaxQueueSize()) {
 
-                }
-
+                    eventList.add(new Testing(TimeManager.getElapsedTimeInMilliSeconds(), super.getCarID(), super.getNumberOfPeopleInCar()));
+                    SimulationManager.increaseQueueCounter();
         }else{
 
             eventList.add(new LeavingTheStation(TimeManager.getElapsedTimeInMilliSeconds(), super.getCarID(), super.getNumberOfPeopleInCar(),false));

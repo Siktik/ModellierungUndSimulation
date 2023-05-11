@@ -3,7 +3,6 @@ package events;
 import Utils.TimeManager;
 import simManagement.SimulationManager;
 
-import java.sql.Time;
 import java.util.PriorityQueue;
 
 public class LeavingTheStation extends Event {
@@ -20,15 +19,13 @@ public class LeavingTheStation extends Event {
     public PriorityQueue<Event> process(PriorityQueue<Event> eventList){
 
         if(this.isHasBeenTested()) {
-            SimulationManager.setCurrentState(SimulationManager.currentStateEnum.IDLE);
+
+            SimulationManager.decreaseQueueCounter();
             System.out.println("Car " + super.getCarID() + " is leaving at " + super.getTimestampOfExecution() + " and has been tested");
 
-            if(!SimulationManager.queuedArrivals.isEmpty()){
-                ArrivingAtTheTestStation arrivingAtTheTestStation= SimulationManager.queuedArrivals.remove(0);
-                eventList.add(new Testing(TimeManager.getElapsedTimeInMilliSeconds(), arrivingAtTheTestStation.getCarID(), arrivingAtTheTestStation.getNumberOfPeopleInCar()));
-                System.out.println("Car "+ arrivingAtTheTestStation.getCarID()+" should be tested next");
-            }
+
         }else {
+            SimulationManager.addCarThatCouldNotHaveBeenTested();
             System.out.println("Car " + super.getCarID() + " is leaving at " + super.getTimestampOfExecution() + " and has not been tested");
         }
         return eventList;

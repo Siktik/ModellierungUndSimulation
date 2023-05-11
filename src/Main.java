@@ -1,6 +1,11 @@
+import Utils.CSVWriter;
 import simManagement.SimulationManager;
 
+import java.io.IOException;
+
 public class Main {
+
+
 
     public static void main(String[] args) {
 
@@ -9,12 +14,24 @@ public class Main {
 
         if(SimulationManager.isGeneratedEvents()){
             /// start
-            System.out.println("Starting Sim Run");
-            SimulationManager.run();
+            //while(SimulationManager.getRunID()< SimulationManager.getAllQueueSizes().length) {
+                SimulationManager.setupRun();
+                SimulationManager.run();
+           // }
+            CSVWriter writer= new CSVWriter("Test.csv");
+            if(writer.fileExists()) {
+                try {
+                    writer.write("test");
+                }catch(IOException ignored){
+
+                }
+            }
 
 
         }else{
             throw new IllegalStateException("Could not generate Events for Simulation");
         }
     }
+
+
 }

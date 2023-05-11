@@ -39,20 +39,45 @@ public class SimulationManager {
             return 0;
         }
     });
-    static int carCounter =0;
+    private static List<Event> arrivalEventsForEveryRun;
+    private static int[] allQueueSizes= {10,12,14,16,18,20,30};
+    private static int runID;
+    private static int carCounter =0;
     private static int queue=0;
+    private static int carsThatCouldNotHaveBeenTested=0;
     private static final int min_Value= 300;
     private static final int max_value= 1200;
     private static Event currentEvent;
     private static boolean generatedEvents;
-    private static final int maxQueueSize= 10;
+    private static int maxQueueSize= 10;
     private static currentStateEnum currentState= currentStateEnum.IDLE;
     public static LinkedList<ArrivingAtTheTestStation> queuedArrivals= new LinkedList<>();
+    public static List<Integer> amountOfPeopleInACar= new LinkedList<>();
+    public static List<Integer> amountOfCarsInTestingLane= new LinkedList<>();
+
+
+
+
+    public static void setupRun(){
+        carCounter=0;
+        queue=0;
+        queuedArrivals=new LinkedList<>();
+        eventList.clear();
+        currentState=currentStateEnum.IDLE;
+        carsThatCouldNotHaveBeenTested=0;
+        amountOfPeopleInACar= new LinkedList<>();
+        amountOfCarsInTestingLane= new LinkedList<>();
+        maxQueueSize= allQueueSizes[runID];
+        runID++;
+        eventList.addAll(arrivalEventsForEveryRun);
+
+    }
 
 
 
     public static void run(){
         System.out.println("____________________________________\nTimeStamp___CarID___EventType___#CarsInTheSystem\n____________________________________");
+
         TimeManager.start();
         while (!eventList.isEmpty()) {
 
@@ -85,14 +110,18 @@ public class SimulationManager {
 
         System.out.println("Generating Arriving Events");
         int i= 0;
+        arrivalEventsForEveryRun= new LinkedList<>();
 
         while(i<=72000){   // 2 minutes in milliseconds
             int timeInterval= NumberGenerator.generateRandomNumber(max_value,min_Value);
             i+= timeInterval;
-            eventList.add(new ArrivingAtTheTestStation(i, carCounter++, NumberGenerator.generateRandomNumber(5,1)));
+            ArrivingAtTheTestStation event= new ArrivingAtTheTestStation(i, carCounter++, NumberGenerator.generateRandomNumber(5,1));
+            arrivalEventsForEveryRun.add(event);
+            amountOfPeopleInACar.add(event.getNumberOfPeopleInCar());
+
         }
 
-        System.out.println("Generated a total of "+ eventList.size()+" events");
+        System.out.println("Generated a total of "+ arrivalEventsForEveryRun.size()+" events");
         setGeneratedEvents(true);
     }
 
@@ -119,10 +148,31 @@ public class SimulationManager {
 
     public static void printEvent(Event event){
 
-        int carsInTheSystem= queuedArrivals.size();
-        if(currentState==currentStateEnum.TESTING)
-            carsInTheSystem++;
 
-        System.out.println(TimeManager.formatTimeFromMilliSecondsToSeconds(event.getTimestampOfExecution())+"___"+ event.getCarID()+"___"+event.getEventClass().getSimpleName()+"___"+ carsInTheSystem);
+
+        System.out.println(TimeManager.formatTimeFromMilliSecondsToSeconds(event.getTimestampOfExecution())+"___"+ event.getCarID()+"___"+event.getEventClass().getSimpleName()+"___"+ queue);
+    }
+
+    public static int getCarsThatCouldNotHaveBeenTested() {
+        return carsThatCouldNotHaveBeenTested;
+    }
+
+    public static void addCarThatCouldNotHaveBeenTested() {
+        carsThatCouldNotHaveBeenTested++;
+    }
+    public static int[] getAllQueueSizes() {
+        return allQueueSizes;
+    }
+
+    public static void setAllQueueSizes(int[] allQueueSizes) {
+        SimulationManager.allQueueSizes = allQueueSizes;
+    }
+
+    public static int getRunID() {
+        return runID;
+    }
+
+    public static void setRunID(int runID) {
+        SimulationManager.runID = runID;
     }
 }

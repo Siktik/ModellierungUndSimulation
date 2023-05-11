@@ -23,10 +23,12 @@ public class Testing extends Event {
 
     public PriorityQueue<Event> process(PriorityQueue<Event> eventList){
 
-        SimulationManager.decreaseQueueCounter();
+
         eventList.add(new LeavingTheStation(calculateTestingTime(), super.getCarID(), super.getNumberOfPeopleInCar(), true));
-        SimulationManager.setCurrentState(SimulationManager.currentStateEnum.TESTING);
+
         return eventList;
+
+
     }
     private long calculateTestingTime(){
         //can be simplified when debugging is done
