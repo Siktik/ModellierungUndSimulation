@@ -7,6 +7,7 @@ public class Main {
 
         if(SimulationManager.generatedEvents){
             /// start
+            System.out.println("Starting Sim Run");
             SimulationManager.run();
 
 

@@ -1,7 +1,3 @@
-import events.ArrivingAtTheTestStation;
-import events.Event;
-
-import java.sql.Time;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,6 +8,7 @@ public class SimulationManager {
 
 
     static boolean generatedEvents;
+
 
 
     /*
@@ -30,10 +27,100 @@ public class SimulationManager {
         }
     });
     static int carCounter =0;
+    private static int queue=0;
+    private static final int min_Value;      //milliseconds
+    private static final int max_value;
+    private static Event currentEvent;
+    private static currentStateEnum currentState= currentStateEnum.IDLE;
+
+    public enum currentStateEnum{
+        IDLE,
+        TESTING
+    }
 
 
-    private static final int min_Value=300;      //milliseconds
-    private static final int max_value=1200;
+
+    static {
+
+        min_Value=300;
+        max_value=1200;
+    }
+
+    public static void run(){
+
+        TimeManager.start();
+        while(true){
+
+            SimulationManager.checkQueue();
+
+            if(currentState==currentStateEnum.IDLE)
+            currentEvent= eventList.peek();
+            if(currentEvent==null)
+                continue;
+            if(allArrivingEvents.isEmpty()&&eventList.isEmpty())
+                break;
+
+            try {
+
+                eventList = currentEvent.processEvent(eventList);
+
+            }catch(IllegalStateException e){
+
+                System.out.println("There is a Problem mate, this should not have happened -> passed a Eventclass that cant be processed");
+            }
+
+
+
+            List<Event> leavingTheStationEvents= eventList.stream().filter(e-> e.getEventClass().isAssignableFrom(LeavingTheStation.class)).collect(Collectors.toList());
+            if(!leavingTheStationEvents.isEmpty()){
+
+                for(Event e: leavingTheStationEvents){
+                    LeavingTheStation leavingTheStation= (LeavingTheStation) e;
+                    if(leavingTheStation.isHasBeenTested())
+                        System.out.println("Car "+ e.getCarID() +" arrived at "+ e.getTimestampOfExecution()+ " is leaving and has been tested");
+                    else
+                        System.out.println("Car "+ e.getCarID() +" arrived at "+ e.getTimestampOfExecution()+ " is leaving and has not been tested");
+
+                }
+                eventList.removeAll(leavingTheStationEvents);
+
+            }
+      }
+        System.out.println("End of Sim Run");
+        TimeManager.stop();
+
+
+    }
+    public static void checkQueue(){
+
+        List<Event> newArrivals= allArrivingEvents.stream().filter(e-> e.getTimestampOfExecution()< TimeManager.getElapsedTimeInMilliSeconds()).collect(Collectors.toList());
+        if(queue<10) {
+            while (queue < 10) {
+                if (newArrivals.isEmpty())
+                    break;
+                Event e = newArrivals.remove(0);
+                allArrivingEvents.remove(e);
+                eventList.add(e);
+                queue++;
+                for (Event f : eventList) {
+                    System.out.println(f);
+                }
+            }
+            if(!newArrivals.isEmpty())
+                releaseCarsNotFittingInQueue(newArrivals);
+        }else{
+            releaseCarsNotFittingInQueue(newArrivals);
+        }
+    }
+    public static void releaseCarsNotFittingInQueue(List<Event> newArrivals){
+        allArrivingEvents.removeAll(newArrivals);
+        for(Event e: newArrivals){
+            eventList.add(new LeavingTheStation(Integer.MAX_VALUE, e.getCarID(), e.getNumberOfPeopleInCar(),false, e.getTimestampOfExecution(), (int)TimeManager.getElapsedTimeInSeconds()));
+        }
+    }
+
+
+
     public static void generateEvents(){
 
       /*
@@ -53,93 +140,10 @@ public class SimulationManager {
 
         System.out.println("Generated a total of "+ allArrivingEvents.size()+" events");
 
-        checkQueue();
         generatedEvents=true;
 
 
     }
-
-    /**
-     * should check if queue is smaller 10 and if there are Arriving Events that are need to be added to the queue because of timestamp Of Execution
-     */
-    public static void checkQueue(){
-
-        int waitingCarsInQueue= (int)eventList
-                .stream()
-                .filter(
-                        e-> e.getEventClass().isAssignableFrom(ArrivingAtTheTestStation.class)
-                )
-                .count();
-
-        List<Event> readyToArriveAtQueue= allArrivingEvents
-                .stream()
-                .filter(
-                        e-> e.getTimestampOfExecution()<TimeManager.getElapsedTimeInMilliSeconds()
-                )
-                .sorted(new Comparator<Event>() {
-                    @Override
-                    public int compare(Event o1, Event o2) {
-                        if(o1.getTimestampOfExecution()<o2.getTimestampOfExecution())
-                            return -1;
-                        else if(o1.getTimestampOfExecution()>o2.getTimestampOfExecution())
-                            return 1;
-                        return 0;
-                    }
-                })
-                .collect(Collectors.toList());
-
-
-        int i=0;
-        System.out.println("Currently Waiting Cars number is "+ waitingCarsInQueue);
-        System.out.println("Therefore adding up to "+ (10-waitingCarsInQueue)+" cars");
-
-        try {
-            while (waitingCarsInQueue <= 10) {
-                Event e = readyToArriveAtQueue.remove(i);
-                System.out.println("Adding " + e.toString());
-                eventList.add(e);
-                i++;
-                waitingCarsInQueue++;
-            }
-
-            System.out.println("Size of Waiting Cars is now " + (int) eventList
-                    .stream()
-                    .filter(
-                            e -> e.getEventClass().isAssignableFrom(ArrivingAtTheTestStation.class)
-                    )
-                    .count());
-
-        }catch(IndexOutOfBoundsException ignored){
-
-        }
-    }
-
-    static Event currentEvent;
-
-    public static void run(){
-
-       TimeManager.start();
-
-       while(!allArrivingEvents.isEmpty()){
-
-           checkQueue();
-           currentEvent= eventList.poll();
-           if(currentEvent==null){
-               continue;
-           }
-
-
-           System.out.println("Current Event is \n"+ currentEvent.toString());
-           currentEvent.processEvent();
-
-
-
-
-
-
-       }
-        System.out.println("Finished Simulation, all Events are processed");
-
-        TimeManager.stop();
-    }
+    public static void decreaseQueueCounter(){queue--;}
+    public static void setCurrentState(currentStateEnum stateToSet){currentState=stateToSet;}
 }

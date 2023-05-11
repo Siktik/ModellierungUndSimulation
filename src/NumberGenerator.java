@@ -1,9 +1,10 @@
+import java.security.SecureRandom;
 import java.util.Random;
 
 public class NumberGenerator {
 
 
-    private static final Random random = new Random();
+    private static final SecureRandom random = new SecureRandom();
 
 
     public static int generateRandomNumber(int maxValue, int minValue) {

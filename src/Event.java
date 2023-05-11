@@ -1,4 +1,4 @@
-package events;
+import java.util.PriorityQueue;
 
 public class Event {
 
@@ -12,29 +12,30 @@ public class Event {
         this.carID=carID;
         this.numberOfPeopleInCar=numberOfPeopleInCar;
         this.eventClass=eventClass;
-        System.out.println(this);
+        //System.out.println(this);
     }
 
-    public void processEvent(){
-        System.out.println("Processed " + this);
-        /*
+    public PriorityQueue<Event> processEvent(PriorityQueue<Event> eventList) throws IllegalStateException{
+
         if(eventClass.isAssignableFrom(ArrivingAtTheTestStation.class)){
 
             ArrivingAtTheTestStation arrivingAtTheTestStation= (ArrivingAtTheTestStation) this;
+            return arrivingAtTheTestStation.process(eventList);
 
         }else if(eventClass.isAssignableFrom(Testing.class)){
 
             Testing testing= (Testing) this;
+            return testing.process(eventList);
 
         }else if(eventClass.isAssignableFrom(LeavingTheStation.class)){
 
-            LeavingTheStation leavingTheStation= (LeavingTheStation) this;
+            System.err.println("Wrong place, Events of this type are only added and deleted anyway there is nothing to process");
 
         }else{
-            throw new IllegalStateException("The Eventclass you want to process is not defined");
+            throw new IllegalStateException("The EventClass you want to process is not defined");
         }
-        */
 
+        throw new IllegalStateException("Well... take a look at the code");
     }
 
     @Override

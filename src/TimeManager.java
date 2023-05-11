@@ -11,9 +11,9 @@ public class TimeManager {
     }
 
     public static long getElapsedTimeInSeconds() {
-        return (endTime - startTime) / 1000;
+        return getElapsedTimeInMilliSeconds() / 1000;
     }
     public static long getElapsedTimeInMilliSeconds() {
-        return (endTime - startTime);
+        return (System.currentTimeMillis() - startTime);
     }
 }
