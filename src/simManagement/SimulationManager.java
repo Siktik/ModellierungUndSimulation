@@ -14,10 +14,7 @@ import java.util.stream.Collectors;
 
 public class SimulationManager {
 
-    public enum currentStateEnum{
-        IDLE,
-        TESTING
-    }
+
 
     /**
      About the SimTime
@@ -50,7 +47,6 @@ public class SimulationManager {
     private static Event currentEvent;
     private static boolean generatedEvents;
     private static int maxQueueSize= 10;
-    private static currentStateEnum currentState= currentStateEnum.IDLE;
     public static LinkedList<ArrivingAtTheTestStation> queuedArrivals= new LinkedList<>();
     public static List<Integer> amountOfPeopleInACar= new LinkedList<>();
     public static List<Integer> amountOfCarsInTestingLane= new LinkedList<>();
@@ -63,7 +59,6 @@ public class SimulationManager {
         queue=0;
         queuedArrivals=new LinkedList<>();
         eventList.clear();
-        currentState=currentStateEnum.IDLE;
         carsThatCouldNotHaveBeenTested=0;
         amountOfPeopleInACar= new LinkedList<>();
         amountOfCarsInTestingLane= new LinkedList<>();
@@ -138,13 +133,7 @@ public class SimulationManager {
         SimulationManager.generatedEvents = generatedEvents;
     }
 
-    public static currentStateEnum getCurrentState() {
-        return currentState;
-    }
 
-    public static void setCurrentState(currentStateEnum currentState) {
-        SimulationManager.currentState = currentState;
-    }
 
     public static void printEvent(Event event){
 

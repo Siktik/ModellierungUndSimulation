@@ -1,16 +1,18 @@
 import Utils.CSVWriter;
 import simManagement.SimulationManager;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class Main {
 
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
 
-        SimulationManager.generateEvents();     //should set generated Events to true if successful
+       /* SimulationManager.generateEvents();     //should set generated Events to true if successful
 
         if(SimulationManager.isGeneratedEvents()){
             /// start
@@ -18,19 +20,17 @@ public class Main {
                 SimulationManager.setupRun();
                 SimulationManager.run();
            // }
-            CSVWriter writer= new CSVWriter("Test.csv");
-            if(writer.fileExists()) {
-                try {
-                    writer.write("test");
-                }catch(IOException ignored){
 
-                }
-            }
 
 
         }else{
             throw new IllegalStateException("Could not generate Events for Simulation");
-        }
+        }*/
+        File file= new File("test.csv");
+        FileWriter writer= new FileWriter(file, false);
+
+        writer.write("Test");
+        writer.close();
     }
 
 
