@@ -19,8 +19,9 @@ public class ArrivingAtTheTestStation extends Event {
 
         if(SimulationManager.getQueueCounter() < SimulationManager.getMaxQueueSize()) {
 
-                    eventList.add(new Testing(TimeManager.getElapsedTimeInMilliSeconds(), super.getCarID(), super.getNumberOfPeopleInCar()));
                     SimulationManager.increaseQueueCounter();
+                    eventList.add(new Testing(TimeManager.getElapsedTimeInMilliSeconds(), super.getCarID(), super.getNumberOfPeopleInCar()));
+
         }else{
 
             eventList.add(new LeavingTheStation(TimeManager.getElapsedTimeInMilliSeconds(), super.getCarID(), super.getNumberOfPeopleInCar(),false));

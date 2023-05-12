@@ -4,13 +4,12 @@ import Utils.NumberGenerator;
 import Utils.TimeManager;
 import events.ArrivingAtTheTestStation;
 import events.Event;
-import events.LeavingTheStation;
 
+import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.stream.Collectors;
 
 public class SimulationManager {
 
@@ -37,10 +36,10 @@ public class SimulationManager {
         }
     });
     private static List<Event> arrivalEventsForEveryRun;
-    private static int[] allQueueSizes= {10,12,14,16,18,20,30};
+    private static final int[] allQueueSizes= {10,12,14,16,20};
     private static int runID;
     private static int carCounter =0;
-    private static int queue=0;
+    private static int inTestingLane =0;
     private static int carsThatCouldNotHaveBeenTested=0;
     private static final int min_Value= 300;
     private static final int max_value= 1200;
@@ -48,7 +47,7 @@ public class SimulationManager {
     private static boolean generatedEvents;
     private static int maxQueueSize= 10;
     public static LinkedList<ArrivingAtTheTestStation> queuedArrivals= new LinkedList<>();
-    public static List<Integer> amountOfPeopleInACar= new LinkedList<>();
+
     public static List<Integer> amountOfCarsInTestingLane= new LinkedList<>();
 
 
@@ -56,15 +55,14 @@ public class SimulationManager {
 
     public static void setupRun(){
         carCounter=0;
-        queue=0;
+        inTestingLane =0;
         queuedArrivals=new LinkedList<>();
         eventList.clear();
+        eventList.addAll(arrivalEventsForEveryRun);
         carsThatCouldNotHaveBeenTested=0;
-        amountOfPeopleInACar= new LinkedList<>();
         amountOfCarsInTestingLane= new LinkedList<>();
         maxQueueSize= allQueueSizes[runID];
-        runID++;
-        eventList.addAll(arrivalEventsForEveryRun);
+        singleRunData=new LinkedList<>();
 
     }
 
@@ -84,8 +82,9 @@ public class SimulationManager {
             try {
 
                 assert currentEvent != null;
-                printEvent(currentEvent);
+
                 eventList = currentEvent.processEvent(eventList);
+                printEvent(currentEvent);
 
             } catch (IllegalStateException e) {
 
@@ -95,12 +94,12 @@ public class SimulationManager {
         }
 
         TimeManager.stop();
-        System.out.println("End of Sim Run, total Time is: "+ TimeManager.getElapsedTimeInScaledTime()+" seconds or "+ TimeManager.getElapsedTimeInScaledTime()/60+" minutes");
-
+        System.out.println("End of Sim Run "+getRunID()+", total Time is: "+ TimeManager.getElapsedTimeInScaledTime()+" seconds or "+ TimeManager.getElapsedTimeInScaledTime()/60+" minutes");
+        runID++;
 
     }
 
-
+    static double amountOfPeopleInACar=0;
     public static void generateEvents(){
 
         System.out.println("Generating Arriving Events");
@@ -112,17 +111,25 @@ public class SimulationManager {
             i+= timeInterval;
             ArrivingAtTheTestStation event= new ArrivingAtTheTestStation(i, carCounter++, NumberGenerator.generateRandomNumber(5,1));
             arrivalEventsForEveryRun.add(event);
-            amountOfPeopleInACar.add(event.getNumberOfPeopleInCar());
+            amountOfPeopleInACar+= event.getNumberOfPeopleInCar();
 
         }
+
+        System.out.println("amountOfAllPeople"+ amountOfPeopleInACar);
+        amountOfPeopleInACar= amountOfPeopleInACar/arrivalEventsForEveryRun.size();
+        System.out.println("unformatted averagePeopleInCar "+ amountOfPeopleInACar);
+
+
 
         System.out.println("Generated a total of "+ arrivalEventsForEveryRun.size()+" events");
         setGeneratedEvents(true);
     }
 
-    public static void decreaseQueueCounter(){queue--;}
-    public static int getQueueCounter(){return queue;}
-    public static void increaseQueueCounter(){queue++;}
+    public static void decreaseQueueCounter(){
+        inTestingLane--;}
+    public static int getQueueCounter(){return inTestingLane;}
+    public static void increaseQueueCounter(){
+        inTestingLane++;}
     public static int getMaxQueueSize(){return maxQueueSize;}
 
     public static boolean isGeneratedEvents() {
@@ -134,12 +141,25 @@ public class SimulationManager {
     }
 
 
-
+    private static List<String> singleRunData= new LinkedList<>();
     public static void printEvent(Event event){
 
 
+        String str= runID+";"+TimeManager.formatTimeFromMilliSecondsToSeconds(event.getTimestampOfExecution())+";"+ event.getCarID()+";"+event.getEventClass().getSimpleName()+";"+ inTestingLane;
+        System.out.println(str);
+        singleRunData.add(str);
 
-        System.out.println(TimeManager.formatTimeFromMilliSecondsToSeconds(event.getTimestampOfExecution())+"___"+ event.getCarID()+"___"+event.getEventClass().getSimpleName()+"___"+ queue);
+    }
+
+    public static List<String> getSingleRunDataLogs() {
+        return singleRunData;
+    }
+    public static String getSingleRunData(){
+        if(runID-1>=0) {
+            DecimalFormat df = new DecimalFormat("#.###");
+            return getRunID() + ";" + getAllQueueSizes()[runID - 1] + ";" + df.format(amountOfPeopleInACar) + ";" + getCarsThatCouldNotHaveBeenTested();
+        }
+        return "Empty Result";
     }
 
     public static int getCarsThatCouldNotHaveBeenTested() {
@@ -153,15 +173,11 @@ public class SimulationManager {
         return allQueueSizes;
     }
 
-    public static void setAllQueueSizes(int[] allQueueSizes) {
-        SimulationManager.allQueueSizes = allQueueSizes;
-    }
 
     public static int getRunID() {
         return runID;
     }
 
-    public static void setRunID(int runID) {
-        SimulationManager.runID = runID;
-    }
+
+
 }
