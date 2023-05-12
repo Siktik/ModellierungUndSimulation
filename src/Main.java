@@ -9,13 +9,15 @@ import java.util.List;
 public class Main {
 
 
+    static List<String> dataCollectorLogs= new LinkedList<>();
+    static List<String> dataCollectorSingleValues= new LinkedList<>();
+    static List<String> dataCollectorDwellTime= new LinkedList<>();
+    static List<String> dataCollectorAmountOfVehicleInTestingLane= new LinkedList<>();
 
     public static void main(String[] args) throws IOException {
 
-        List<String> dataCollectorLogs= new LinkedList<>();
-        List<String> dataCollectorSingleValues= new LinkedList<>();
 
-        SimulationManager.generateEvents();     //should set generated Events to true if successful
+        SimulationManager.generateEvents();
 
         if(SimulationManager.isGeneratedEvents()){
             /// start
@@ -24,34 +26,56 @@ public class Main {
                 SimulationManager.run();
                 dataCollectorLogs.addAll(SimulationManager.getSingleRunDataLogs());
                 dataCollectorSingleValues.add(SimulationManager.getSingleRunData());
+                dataCollectorDwellTime.addAll(SimulationManager.getDwellTime());
+                dataCollectorAmountOfVehicleInTestingLane.addAll(SimulationManager.getTestingLaneData());
             }
 
-
-
+            writeData();
         }else{
             throw new IllegalStateException("Could not generate Events for Simulation");
         }
 
 
-        File simDataValues= new File("SimDataValues.csv");
-        FileWriter writerValues= new FileWriter(simDataValues, false);
-        for(String string: dataCollectorSingleValues){
-            writerValues.write(string+"\n");
-        }
-        writerValues.close();
-
-        File file= new File("SimDataLogs.csv");
-        FileWriter writerLogs= new FileWriter(file, false);
-        for(String string: dataCollectorLogs){
-            writerLogs.write(string+"\n");
-        }
-        writerLogs.close();
-
 
     }
-    public static void setData(){
 
+    private static void writeData(){
+
+        try {
+            File simDataTestingLane = new File("SimDataTestingLane.csv");
+            FileWriter writerTestingLane = new FileWriter(simDataTestingLane, false);
+            for (String string : dataCollectorAmountOfVehicleInTestingLane) {
+                writerTestingLane.write(string + "\n");
+            }
+            writerTestingLane.close();
+
+
+            File simDataDwellTime = new File("SimDataDwellTime.csv");
+            FileWriter writerDwellTime = new FileWriter(simDataDwellTime, false);
+            for (String string : dataCollectorDwellTime) {
+                writerDwellTime.write(string + "\n");
+            }
+            writerDwellTime.close();
+
+            File simDataValues = new File("SimDataValues.csv");
+            FileWriter writerValues = new FileWriter(simDataValues, false);
+            for (String string : dataCollectorSingleValues) {
+                writerValues.write(string + "\n");
+            }
+            writerValues.close();
+
+            File file = new File("SimDataLogs.csv");
+            FileWriter writerLogs = new FileWriter(file, false);
+            for (String string : dataCollectorLogs) {
+                writerLogs.write(string + "\n");
+            }
+            writerLogs.close();
+
+        }catch (IOException ignored){
+            System.err.println("Could not write Data to CSV -> IOException");
+        }
     }
+
 
 
 }

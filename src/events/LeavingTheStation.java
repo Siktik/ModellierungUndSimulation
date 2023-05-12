@@ -18,7 +18,7 @@ public class LeavingTheStation extends Event {
 
     public PriorityQueue<Event> process(PriorityQueue<Event> eventList){
 
-        if(this.isHasBeenTested()) {
+        if(this.isHasBeenTested()) {        //wurde getestet? dann decrease queue sonst nichts (außer data value)
 
             SimulationManager.decreaseQueueCounter();
             System.out.println("Car " + super.getCarID() + " is leaving at " + super.getTimestampOfExecution() + " and has been tested");

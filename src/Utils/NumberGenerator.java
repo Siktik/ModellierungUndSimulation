@@ -5,7 +5,9 @@ import java.util.Random;
 
 public class NumberGenerator {
 
-
+    /**
+     * classic number generator
+     */
     private static final SecureRandom random = new SecureRandom();
 
 
