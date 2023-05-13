@@ -7,14 +7,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Main {
-
+    /**
+     * Köhmstedt Jonas, 1351904
+     * Maywald Moritz, 1358960
+     * Späth Maximilian, 1456880
+     */
 
     static List<String> dataCollectorLogs= new LinkedList<>();
     static List<String> dataCollectorSingleValues= new LinkedList<>();
     static List<String> dataCollectorDwellTime= new LinkedList<>();
     static List<String> dataCollectorAmountOfVehicleInTestingLane= new LinkedList<>();
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
 
         SimulationManager.generateEvents();
