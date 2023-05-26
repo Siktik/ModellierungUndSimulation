@@ -32,23 +32,8 @@ public class SimulationManager {
      */
 
     /**
-     * eventList verwaltet alle Events die abgearbeitet werden sollen. Hierbei steht das event mit dem kleinsten
-     * Zeitstempel immer an erster Stelle und wird in der run Methode in der entsprechenden while Schleife aus der Queue entfernt wenn
-     * der Zeitstempel laut Simulationszeit überschritten wurde
-     */
-    static PriorityQueue<ArrivingAtTheTestStation> eventList= new PriorityQueue<>(new Comparator<ArrivingAtTheTestStation>() {
-        @Override
-        public int compare(ArrivingAtTheTestStation o1, ArrivingAtTheTestStation o2) {
-            if(o1.getTimestampOfExecution()<o2.getTimestampOfExecution())
-                return -1;
-            else if(o1.getTimestampOfExecution()>o2.getTimestampOfExecution())
-                return 1;
-            return 0;
-        }
-    });
-    /**
-     * da wir mehrere Runs machen mit verschiedenen Testing Lane Kapazitäten aber vergleichbarkeit zwischen den Runs haben wollen werden die Arriving events
-     * nur einmal initalisiert und in dieser Liste gespeichert. Zu Beginn eines Runs werden alle ihre Elemente in die eventList geschrieben
+     * da wir mehrere Runs machen mit verschiedenen Queuing Disziplinen aber vergleichbarkeit zwischen den Runs haben wollen werden die Arriving events
+     * nur einmal initalisiert und in dieser Liste gespeichert. Zu Beginn eines Runs werden alle ihre Elemente in die allArrivalEvents geschrieben
      */
     private static List<ArrivingAtTheTestStation> arrivalEventsForEveryRun;
     private static List<ArrivingAtTheTestStation> allArrivalEvents;
