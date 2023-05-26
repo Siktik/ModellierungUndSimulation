@@ -48,18 +48,17 @@ public class SimulationManager {
      * nur einmal initalisiert und in dieser Liste gespeichert. Zu Beginn eines Runs werden alle ihre Elemente in die eventList geschrieben
      */
     private static List<Event> arrivalEventsForEveryRun;
-    private static final int[] allQueueSizes= {10,12,14,16,20};
     private static int runID;
     private static int carCounter =0;   //static car ID Counter
-    private static int maxQueueSize;    //maximale Kapazität der Testing Lane, zu beginn eines Runs festgelegt über allQueueSizes
     private static boolean generatedEvents;     //Hilfsvariable wird in der main abgefragt ob das generieren der Events geklappt hat
     private static final int min_Value= 300;    //minimaler Wert für Abstand zwischen Arriving Event -> 300ms -> 30 sek
     private static final int max_value= 1200;   //maximaler Wert für Abstand zwischen Arriving Event -> 1200ms -> 120 sek
-
+    private static List<Server> allServers= new LinkedList();
     /**
      * wird benutzt um zu speichern wie viele Fahrzeuge gerade getestet werden, dieser Wert ist daher immer <= maxQueueSize
      */
     private static int inTestingLane =0;
+
 
 
     /**
@@ -127,7 +126,6 @@ public class SimulationManager {
         inTestingLane =0;
         eventList.clear();
         eventList.addAll(arrivalEventsForEveryRun);     //wie bei Variablen beschrieben
-        maxQueueSize= allQueueSizes[runID];             //runID startet bei null wird am ende eines Durchlaufs in der run Methode inkrementiert
 
 
 
@@ -197,7 +195,7 @@ public class SimulationManager {
         SimulationManager.addCarsInTestingLane();
     }
 
-    public static int getMaxQueueSize(){return maxQueueSize;}
+
 
 
     private static List<String> singleRunData= new LinkedList<>();
@@ -228,13 +226,7 @@ public class SimulationManager {
         return dwellTimeData;
     }
 
-    public static List<String> getTestingLaneData(){
-        List<String> testingLaneData= new LinkedList<>();
-        for(int i=0; i<= maxQueueSize; i++){
-            testingLaneData.add((runID-1)+";"+i+";"+ amountOfVehiclesInSystemOverTime.get(i));
-        }
-        return testingLaneData;
-    }
+
 
     public static String getSingleRunData(){
         if(runID-1>=0) {
@@ -245,7 +237,7 @@ public class SimulationManager {
             inTestingLaneOnAverage= inTestingLaneOnAverage/ amountOfCarsInTestingLane.size();
 
             DecimalFormat df = new DecimalFormat("#.###");
-            return (runID-1) + ";" + getAllQueueSizes()[runID - 1] + ";" + df.format(amountOfPeopleInACar) + ";" + getCarsThatCouldNotHaveBeenTested()+ ";"+df.format(inTestingLaneOnAverage);
+            return (runID-1) + ";" + df.format(amountOfPeopleInACar) + ";" + getCarsThatCouldNotHaveBeenTested()+ ";"+df.format(inTestingLaneOnAverage);
         }
         return "Empty Result";
     }
@@ -267,9 +259,7 @@ public class SimulationManager {
     public static void addCarThatCouldNotHaveBeenTested() {
         carsThatCouldNotHaveBeenTested++;
     }
-    public static int[] getAllQueueSizes() {
-        return allQueueSizes;
-    }
+
     public static List<String> getSingleRunDataLogs() {
         return singleRunData;
     }

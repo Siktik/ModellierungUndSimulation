@@ -17,16 +17,7 @@ public class ArrivingAtTheTestStation extends Event {
     public PriorityQueue<Event> process(PriorityQueue<Event> eventList){
 
 
-        if(SimulationManager.getQueueCounter() < SimulationManager.getMaxQueueSize()) {     //Platz? dann rein sonst weiterfahren
 
-                    SimulationManager.increaseQueueCounter();
-                    eventList.add(new Testing(TimeManager.getElapsedTimeInMilliSeconds(), super.getCarID(), super.getNumberOfPeopleInCar()));
-
-        }else{
-
-            eventList.add(new LeavingTheStation(TimeManager.getElapsedTimeInMilliSeconds(), super.getCarID(), super.getNumberOfPeopleInCar(),false));
-
-        }
         return eventList;
     }
 }

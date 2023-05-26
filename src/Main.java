@@ -25,14 +25,12 @@ public class Main {
 
         if(SimulationManager.isGeneratedEvents()){
             /// start
-            while(SimulationManager.getRunID()< SimulationManager.getAllQueueSizes().length) {
                 SimulationManager.setupRun();
                 SimulationManager.run();
                 dataCollectorLogs.addAll(SimulationManager.getSingleRunDataLogs());
                 dataCollectorSingleValues.add(SimulationManager.getSingleRunData());
                 dataCollectorDwellTime.addAll(SimulationManager.getDwellTime());
-                dataCollectorAmountOfVehicleInTestingLane.addAll(SimulationManager.getTestingLaneData());
-            }
+
 
             writeData();
         }else{
