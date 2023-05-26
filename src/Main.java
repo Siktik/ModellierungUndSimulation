@@ -27,12 +27,12 @@ public class Main {
             /// start
                 SimulationManager.setupRun();
                 SimulationManager.run();
-                dataCollectorLogs.addAll(SimulationManager.getSingleRunDataLogs());
-                dataCollectorSingleValues.add(SimulationManager.getSingleRunData());
-                dataCollectorDwellTime.addAll(SimulationManager.getDwellTime());
+                //dataCollectorLogs.addAll(SimulationManager.getSingleRunDataLogs());
+                //dataCollectorSingleValues.add(SimulationManager.getSingleRunData());
+                //dataCollectorDwellTime.addAll(SimulationManager.getDwellTime());
 
 
-            writeData();
+            //writeData();
         }else{
             throw new IllegalStateException("Could not generate Events for Simulation");
         }

@@ -1,15 +1,19 @@
 package simManagement;
 
+import Utils.TimeManager;
+import events.ArrivingAtTheTestStation;
 import events.Event;
+import events.LeavingTheStation;
+import events.Testing;
 
 public class Server {
 
-    Event testingInformation;
+    Testing testingInformation;
     int id;
     ServerState serverState;
-    public Server(int id, Event testingInformation){
+    public Server(int id){
         this.id= id;
-        this.testingInformation=testingInformation;
+        setServerState(ServerState.IDLE);
     }
 
     public Event getTestingInformation() {
@@ -28,7 +32,41 @@ public class Server {
         this.serverState = serverState;
     }
 
-    public void setTestingInformation(Event testingInformation) {
+    public void setTestingInformation(Testing testingInformation) {
         this.testingInformation = testingInformation;
+    }
+
+    public void evaluateCurrentState(){
+        switch (serverState){
+            case IDLE -> {
+                if(!SimulationManager.queue.isEmpty()){
+                    setServerState(ServerState.TESTING);
+                    ArrivingAtTheTestStation arrivingAtTheTestStation= SimulationManager.queue.poll();
+                    testingInformation= new Testing(TimeManager.getElapsedTimeInMilliSeconds(), arrivingAtTheTestStation.getCarID(), arrivingAtTheTestStation.getNumberOfPeopleInCar(), arrivingAtTheTestStation.getTimeToSpentOnTesting());
+
+
+                    System.out.println("Server" + id+" changes to Testing, took \n"+ arrivingAtTheTestStation+" \n from queue,  testing now for "+ testingInformation.getTimeToSpentOnTesting());
+                }
+            }
+            case TESTING -> {
+                if((testingInformation.getTimeToSpentOnTesting()+ testingInformation.getTimestampOfExecution())< TimeManager.getElapsedTimeInMilliSeconds()){
+                    setServerState(ServerState.IDLE);
+                    System.out.println("Server" + id+" changes to IDLE, finished \n"+ testingInformation+" \n from queue,  sending home ");
+
+                    LeavingTheStation leavingTheStation= new LeavingTheStation(TimeManager.getElapsedTimeInMilliSeconds(),
+                            testingInformation.getCarID(),testingInformation.getNumberOfPeopleInCar(), true);
+                    leavingTheStation.process();
+
+                }
+
+            }
+        }
+
+    }
+    public boolean isIdle(){
+        return ServerState.IDLE == serverState;
+    }
+    public boolean isTesting(){
+        return ServerState.TESTING == serverState;
     }
 }

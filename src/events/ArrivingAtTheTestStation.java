@@ -9,15 +9,14 @@ import java.util.PriorityQueue;
 
 public class ArrivingAtTheTestStation extends Event {
 
+    private long timeToSpentOnTesting;
+
     public ArrivingAtTheTestStation(long timestampOfExecution, int carID, int numberOfPeopleInCar){
         super(timestampOfExecution, carID, numberOfPeopleInCar, ArrivingAtTheTestStation.class);
+        timeToSpentOnTesting= (1200L * super.getNumberOfPeopleInCar());
     }
 
-    //processEvent
-    public PriorityQueue<Event> process(PriorityQueue<Event> eventList){
-
-
-
-        return eventList;
+    public long getTimeToSpentOnTesting() {
+        return timeToSpentOnTesting;
     }
 }

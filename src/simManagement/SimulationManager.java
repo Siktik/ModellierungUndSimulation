@@ -1,5 +1,6 @@
 package simManagement;
 
+import Utils.AllComparators;
 import Utils.NumberGenerator;
 import Utils.TimeManager;
 import events.ArrivingAtTheTestStation;
@@ -7,6 +8,7 @@ import events.Event;
 
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SimulationManager {
 
@@ -33,9 +35,9 @@ public class SimulationManager {
      * Zeitstempel immer an erster Stelle und wird in der run Methode in der entsprechenden while Schleife aus der Queue entfernt wenn
      * der Zeitstempel laut Simulationszeit überschritten wurde
      */
-    static PriorityQueue<Event> eventList= new PriorityQueue<>(new Comparator<Event>() {
+    static PriorityQueue<ArrivingAtTheTestStation> eventList= new PriorityQueue<>(new Comparator<ArrivingAtTheTestStation>() {
         @Override
-        public int compare(Event o1, Event o2) {
+        public int compare(ArrivingAtTheTestStation o1, ArrivingAtTheTestStation o2) {
             if(o1.getTimestampOfExecution()<o2.getTimestampOfExecution())
                 return -1;
             else if(o1.getTimestampOfExecution()>o2.getTimestampOfExecution())
@@ -47,13 +49,17 @@ public class SimulationManager {
      * da wir mehrere Runs machen mit verschiedenen Testing Lane Kapazitäten aber vergleichbarkeit zwischen den Runs haben wollen werden die Arriving events
      * nur einmal initalisiert und in dieser Liste gespeichert. Zu Beginn eines Runs werden alle ihre Elemente in die eventList geschrieben
      */
-    private static List<Event> arrivalEventsForEveryRun;
+    private static List<ArrivingAtTheTestStation> arrivalEventsForEveryRun;
     private static int runID;
     private static int carCounter =0;   //static car ID Counter
     private static boolean generatedEvents;     //Hilfsvariable wird in der main abgefragt ob das generieren der Events geklappt hat
-    private static final int min_Value= 300;    //minimaler Wert für Abstand zwischen Arriving Event -> 300ms -> 30 sek
-    private static final int max_value= 1200;   //maximaler Wert für Abstand zwischen Arriving Event -> 1200ms -> 120 sek
+    private static final int min_Value= 1200;    //minimaler Wert für Abstand zwischen Arriving Event -> 300ms -> 30 sek
+    private static final int max_value= 1800;   //maximaler Wert für Abstand zwischen Arriving Event -> 1200ms -> 120 sek
     private static List<Server> allServers= new LinkedList();
+
+    public static PriorityQueue<ArrivingAtTheTestStation> queue= new PriorityQueue<>();
+
+
     /**
      * wird benutzt um zu speichern wie viele Fahrzeuge gerade getestet werden, dieser Wert ist daher immer <= maxQueueSize
      */
@@ -90,24 +96,11 @@ public class SimulationManager {
         System.out.println("____________________________________\nTimeStamp___CarID___EventType___#CarsInTheSystem\n____________________________________");
 
         TimeManager.start();
-        while (!eventList.isEmpty()) {
-
-
-            Event currentEvent;
-            if (eventList.peek().getTimestampOfExecution() < TimeManager.getElapsedTimeInMilliSeconds())
-                currentEvent = eventList.poll();        //Zeitstempel des Events mit dem frühesten Zeitpunkt ist kleiner als die Simulationszeit und wird daher verarbeitet
-            else continue;
-
-            try {
-
-                assert currentEvent != null;
-                eventList = currentEvent.processEvent(eventList);
-                printEvent(currentEvent);
-
-            } catch (IllegalStateException e) {
-
-                System.out.println("There is a Problem mate, this should not have happened -> passed a Eventclass that cant be processed");
-            }
+        while(true){
+            if(arrivalEventsForEveryRun.isEmpty()&&allServers.stream().allMatch(Server::isIdle))
+                break;
+            checkForNewArrivingEvents();
+            allServers.forEach(Server::evaluateCurrentState);
 
         }
 
@@ -117,16 +110,33 @@ public class SimulationManager {
 
     }
 
+    private static void checkForNewArrivingEvents(){
+        if(!arrivalEventsForEveryRun.isEmpty()) {
+            List<ArrivingAtTheTestStation> newArrivingEvents = arrivalEventsForEveryRun
+                    .stream()
+                    .filter(e -> e.getTimestampOfExecution() < TimeManager.getElapsedTimeInMilliSeconds())
+                    .collect(Collectors.toList());
+            arrivalEventsForEveryRun.removeAll(newArrivingEvents);
+            queue.addAll(newArrivingEvents);
+        }
+    }
+
     /**
      * wird von der main aus vor jedem Simulationsdurchlauf aufgerufen
      * Reset/Setup Funktion
      */
     public static void setupRun(){
-        carCounter=0;
-        inTestingLane =0;
+        carCounter= 0;
+        inTestingLane = 0;
         eventList.clear();
         eventList.addAll(arrivalEventsForEveryRun);     //wie bei Variablen beschrieben
-
+        int serverCouter=0;
+        int numberOfServers=3;
+        allServers= new LinkedList<>();
+        while(serverCouter< numberOfServers){
+            allServers.add(new Server(serverCouter++));
+        }
+        queue= new PriorityQueue<>(AllComparators.getFIFO());
 
 
         //used for Data Analysis
@@ -141,7 +151,7 @@ public class SimulationManager {
 
     /**
      * generiert Arriving Events
-     * ein Event alle 300-1200ms bis 72000ms erreicht sind
+     * ein Event alle 1200-1800ms bis 72000ms erreicht sind
      * da bei diesem Maßstab 10ms simZeit = 1sek echtZeit gilt
      * 1min * 120 = 60 sek * 120 = 600ms *120 = 72000ms
      */
@@ -153,10 +163,10 @@ public class SimulationManager {
         int i= 0;
         arrivalEventsForEveryRun= new LinkedList<>();
 
-        while(i<=72000){   // 2 minutes in milliseconds     //ein Event alle 30-120 sek (Echtzeit), alle 300-1200 ms (SimZeit)
+        while(i<=72000){   // 2 minutes in milliseconds     //ein Event alle 30-120 sek (Echtzeit), alle 1200-1800 ms (SimZeit)
             int timeInterval= NumberGenerator.generateRandomNumber(max_value,min_Value);
             i+= timeInterval;
-            ArrivingAtTheTestStation event= new ArrivingAtTheTestStation(i, carCounter++, NumberGenerator.generateRandomNumber(5,1));
+            ArrivingAtTheTestStation event= new ArrivingAtTheTestStation(i, carCounter++, NumberGenerator.generateRandomNumber(3,1));
             arrivalEventsForEveryRun.add(event);
             amountOfPeopleInACar+= event.getNumberOfPeopleInCar();
 

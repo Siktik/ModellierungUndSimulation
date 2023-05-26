@@ -19,6 +19,12 @@ public class Event {
         //System.out.println(this);
     }
 
+
+    /*
+    Relikt aus Aufgabe 1
+    nichtmehr benötigt für Aufgabe 2, da keine eventList verwendet wird wie in Aufgabe 1
+    queue verwaltet Arriving Events -> Server pullt arriving Events -> erstellt Leaving The Station und führt aus wenn fertig
+    getestet
     public PriorityQueue<Event> processEvent(PriorityQueue<Event> eventList) throws IllegalStateException{
 
         if(eventClass.isAssignableFrom(ArrivingAtTheTestStation.class)){
@@ -42,6 +48,8 @@ public class Event {
         }
 
     }
+    */
+
 
     @Override
     public String toString() {
