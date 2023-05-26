@@ -4,6 +4,7 @@ import events.ArrivingAtTheTestStation;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 public class AllComparators {
 
@@ -50,24 +51,30 @@ public class AllComparators {
             return 0;
         }
     };
-    private static List<Comparator> allComparators= List.of(FIFO,LIFO,SPT,LPT);
+    private static final Map<QueueType,Comparator<ArrivingAtTheTestStation>> allComparators= Map.of(QueueType.FIFO,getFIFO(),QueueType.LIFO,getLIFO(),QueueType.LPT,getLPT(),QueueType.SPT, getSPT());
 
 
-    public static List<Comparator> getAllComparators() {
+    public static Map<QueueType,Comparator<ArrivingAtTheTestStation>> getAllComparators() {
         return allComparators;
     }
 
-    public static Comparator<ArrivingAtTheTestStation> getFIFO() {
+    private static Comparator<ArrivingAtTheTestStation> getFIFO() {
         return FIFO;
     }
-    public static Comparator<ArrivingAtTheTestStation> getLIFO() {
+    private static Comparator<ArrivingAtTheTestStation> getLIFO() {
         return LIFO;
     }
-    public static Comparator<ArrivingAtTheTestStation> getSPT() {
+    private static Comparator<ArrivingAtTheTestStation> getSPT() {
         return SPT;
     }
-    public static Comparator<ArrivingAtTheTestStation> getLPT() {
+    private static Comparator<ArrivingAtTheTestStation> getLPT() {
         return LPT;
     }
 
+    public enum QueueType{
+        FIFO,
+        LIFO,
+        SPT,
+        LPT
+    }
 }

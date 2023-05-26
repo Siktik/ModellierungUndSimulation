@@ -18,16 +18,7 @@ public class LeavingTheStation extends Event {
 
     public void process(){
 
-        if(this.isHasBeenTested()) {        //wurde getestet? dann decrease queue sonst nichts (außer data value)
-
-            SimulationManager.decreaseQueueCounter();
             System.out.println("Car " + super.getCarID() + " is leaving at " + super.getTimestampOfExecution() + " and has been tested");
-
-
-        }else {
-            SimulationManager.addCarThatCouldNotHaveBeenTested();
-            System.out.println("Car " + super.getCarID() + " is leaving at " + super.getTimestampOfExecution() + " and has not been tested");
-        }
 
     }
 

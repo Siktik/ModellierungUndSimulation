@@ -1,10 +1,14 @@
+import Utils.AllComparators;
+import events.ArrivingAtTheTestStation;
 import simManagement.SimulationManager;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
     /**
@@ -25,11 +29,15 @@ public class Main {
 
         if(SimulationManager.isGeneratedEvents()){
             /// start
-                SimulationManager.setupRun();
-                SimulationManager.run();
-                //dataCollectorLogs.addAll(SimulationManager.getSingleRunDataLogs());
-                //dataCollectorSingleValues.add(SimulationManager.getSingleRunData());
-                //dataCollectorDwellTime.addAll(SimulationManager.getDwellTime());
+                Map<AllComparators.QueueType, Comparator<ArrivingAtTheTestStation>> allComparators= AllComparators.getAllComparators();
+                for(AllComparators.QueueType type:allComparators.keySet()) {
+                    System.out.println("Starting new Run \n" +
+                            "Queue Type is "+ type.name());
+                    SimulationManager.setupRun(allComparators.get(type), type);
+                    SimulationManager.run();
+                    dataCollectorLogs.addAll(SimulationManager.getSingleRunDataLogs());
+                    dataCollectorSingleValues.add(SimulationManager.getSingleRunData()+";"+ type.name());
+                }
 
 
             //writeData();

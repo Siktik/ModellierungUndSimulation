@@ -14,6 +14,7 @@ public class ArrivingAtTheTestStation extends Event {
     public ArrivingAtTheTestStation(long timestampOfExecution, int carID, int numberOfPeopleInCar){
         super(timestampOfExecution, carID, numberOfPeopleInCar, ArrivingAtTheTestStation.class);
         timeToSpentOnTesting= (1200L * super.getNumberOfPeopleInCar());
+        SimulationManager.waitingTime.add(timeToSpentOnTesting);
     }
 
     public long getTimeToSpentOnTesting() {

@@ -6,6 +6,8 @@ import events.Event;
 import events.LeavingTheStation;
 import events.Testing;
 
+import java.sql.Time;
+
 public class Server {
 
     Testing testingInformation;
@@ -40,11 +42,12 @@ public class Server {
         switch (serverState){
             case IDLE -> {
                 if(!SimulationManager.queue.isEmpty()){
+
+                    SimulationManager.printQueueTimeStamps();
                     setServerState(ServerState.TESTING);
                     ArrivingAtTheTestStation arrivingAtTheTestStation= SimulationManager.queue.poll();
-                    testingInformation= new Testing(TimeManager.getElapsedTimeInMilliSeconds(), arrivingAtTheTestStation.getCarID(), arrivingAtTheTestStation.getNumberOfPeopleInCar(), arrivingAtTheTestStation.getTimeToSpentOnTesting());
-
-
+                    SimulationManager.waitingTime.add(TimeManager.getElapsedTimeInMilliSeconds()-arrivingAtTheTestStation.getTimestampOfExecution());
+                    testingInformation= new Testing(TimeManager.getElapsedTimeInMilliSeconds(), arrivingAtTheTestStation.getCarID(), arrivingAtTheTestStation.getNumberOfPeopleInCar(), arrivingAtTheTestStation.getTimeToSpentOnTesting(), arrivingAtTheTestStation.getTimestampOfExecution());
                     System.out.println("Server" + id+" changes to Testing, took \n"+ arrivingAtTheTestStation+" \n from queue,  testing now for "+ testingInformation.getTimeToSpentOnTesting());
                 }
             }
@@ -55,6 +58,7 @@ public class Server {
 
                     LeavingTheStation leavingTheStation= new LeavingTheStation(TimeManager.getElapsedTimeInMilliSeconds(),
                             testingInformation.getCarID(),testingInformation.getNumberOfPeopleInCar(), true);
+                    SimulationManager.dwellTime.add(leavingTheStation.getTimestampOfExecution()- testingInformation.getTimeWhenJoinedQueue());
                     leavingTheStation.process();
 
                 }
