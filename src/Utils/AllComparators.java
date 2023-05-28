@@ -3,7 +3,6 @@ package Utils;
 import events.ArrivingAtTheTestStation;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 
 public class AllComparators {
@@ -32,9 +31,9 @@ public class AllComparators {
     private static Comparator<ArrivingAtTheTestStation> SPT= new Comparator<ArrivingAtTheTestStation>() {
         @Override
         public int compare(ArrivingAtTheTestStation o1, ArrivingAtTheTestStation o2) {
-            if(o1.getTimeToSpentOnTesting()<o2.getTimeToSpentOnTesting())
+            if(o1.getTimeToSpendOnTesting()<o2.getTimeToSpendOnTesting())
                 return -1;
-            if(o1.getTimeToSpentOnTesting()>o2.getTimeToSpentOnTesting()){
+            if(o1.getTimeToSpendOnTesting()>o2.getTimeToSpendOnTesting()){
                 return 1;
             }
             return 0;
@@ -43,9 +42,9 @@ public class AllComparators {
     private static Comparator<ArrivingAtTheTestStation> LPT= new Comparator<ArrivingAtTheTestStation>() {
         @Override
         public int compare(ArrivingAtTheTestStation o1, ArrivingAtTheTestStation o2) {
-            if(o1.getTimeToSpentOnTesting()<o2.getTimeToSpentOnTesting())
+            if(o1.getTimeToSpendOnTesting()<o2.getTimeToSpendOnTesting())
                 return 1;
-            if(o1.getTimeToSpentOnTesting()>o2.getTimeToSpentOnTesting()){
+            if(o1.getTimeToSpendOnTesting()>o2.getTimeToSpendOnTesting()){
                 return -1;
             }
             return 0;

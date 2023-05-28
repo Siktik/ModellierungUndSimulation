@@ -6,10 +6,7 @@ import Utils.TimeManager;
 import events.ArrivingAtTheTestStation;
 import events.Event;
 
-import java.sql.Time;
-import java.text.DecimalFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class SimulationManager {
 
@@ -38,13 +35,16 @@ public class SimulationManager {
     private static List<ArrivingAtTheTestStation> arrivalEventsForEveryRun;
     private static List<ArrivingAtTheTestStation> allArrivalEvents;
     private static int runID=0;
-    private static int carCounter =0;   //static car ID Counter
+    private static int carCounter =1;   //static car ID Counter
     private static boolean generatedEvents;     //Hilfsvariable wird in der main abgefragt ob das generieren der Events geklappt hat
     private static final int min_Value= 300;    //minimaler Wert für Abstand zwischen Arriving Event -> 300ms -> 30 sek
     private static final int max_value= 1800;   //maximaler Wert für Abstand zwischen Arriving Event -> 1200ms -> 120 sek
     private static List<Server> allServers= new LinkedList();
-
     public static PriorityQueue<ArrivingAtTheTestStation> queue= new PriorityQueue<>();
+
+    //Multi Queue
+    public static HashMap<Integer, PriorityQueue<ArrivingAtTheTestStation>> multiQueue = new HashMap<>();
+    private static int numOfEvents=0;
     /**
      * Vars and Lists for Analysis
      */
@@ -70,23 +70,32 @@ public class SimulationManager {
      */
     public static void run(){
         System.out.println("____________________________________\nTimeStamp___CarID___EventType___#CarsInTheSystem\n____________________________________");
-
         TimeManager.start();
-        while(true){
 
+        while(true){
             if(allArrivalEvents.isEmpty()&&allServers.stream().allMatch(Server::isIdle))
                 break;
-
             checkForNewArrivingEvents();
-
             allServers.forEach(Server::evaluateCurrentState);
-
         }
 
         TimeManager.stop();
         System.out.println("End of Sim Run "+getRunID()+", total Time is: "+ TimeManager.getElapsedTimeInScaledTime()+" seconds or "+ TimeManager.getElapsedTimeInScaledTime()/60+" minutes");
         runID++;
+    }
 
+    public static void runMultiQueue(){
+        System.out.println("____________________________________\nTimeStamp___CarID___EventType___#CarsInTheSystem\n____________________________________");
+        TimeManager.start();
+        while(true){
+            if(allArrivalEvents.isEmpty()&&allServers.stream().allMatch(Server::isIdle))
+                break;
+            checkForNewArrivingEventsMQ();
+            allServers.forEach(Server::evaluateCurrentStateMQ);
+        }
+        TimeManager.stop();
+        System.out.println("End of Sim Run "+getRunID()+"("+ currentQueueType + "), total Time is: "+ TimeManager.getElapsedTimeInScaledTime()+" seconds or "+ TimeManager.getElapsedTimeInScaledTime()/60+" minutes");
+        runID++;
     }
 
     private static void checkForNewArrivingEvents(){
@@ -95,12 +104,27 @@ public class SimulationManager {
                 queue.add(allArrivalEvents.remove(0));
         }
     }
+
+    private static void checkForNewArrivingEventsMQ(){
+        if(!allArrivalEvents.isEmpty()) {
+            if(allArrivalEvents.get(0).getTimestampOfExecution()< TimeManager.getElapsedTimeInMilliSeconds()){
+
+
+                System.out.println("Calculating Modulo between numofevents " + allArrivalEvents.get(0).getCarID() +  " and server count " + allServers.size());
+                int targetQueue = allArrivalEvents.get(0).getCarID() % allServers.size();
+                System.out.println("targetQueue: carID: "+ allArrivalEvents.get(0).getCarID() + ": target server: " + targetQueue);
+
+                multiQueue.get(targetQueue).add(allArrivalEvents.remove(0));
+            }
+        }
+    }
+
     private static AllComparators.QueueType currentQueueType;
     /**
      * wird von der main aus vor jedem Simulationsdurchlauf aufgerufen
      * Reset/Setup Funktion
      */
-    public static void setupRun(Comparator<ArrivingAtTheTestStation> comparator, AllComparators.QueueType type){
+    public static void setupSingleQueueRun(Comparator<ArrivingAtTheTestStation> comparator, AllComparators.QueueType type){
         currentQueueType=type;
         carCounter= 0;
         allArrivalEvents=new LinkedList<>(arrivalEventsForEveryRun);
@@ -118,6 +142,23 @@ public class SimulationManager {
         processTime= new LinkedList<>();
         waitingTime= new LinkedList<>();
         }
+
+    public static void setupMultiQueueRun(Comparator<ArrivingAtTheTestStation> comparator, AllComparators.QueueType type){
+        allServers.clear();
+        numOfEvents =0;
+        currentQueueType=type;
+        allArrivalEvents=new LinkedList<>(arrivalEventsForEveryRun);
+        int serverCounter = 3;
+        for (int i = 0; i < serverCounter; i++) {
+            allServers.add(new Server(i));
+            multiQueue.put(i, new PriorityQueue<>(comparator));
+        }
+
+        singleRunData=new LinkedList<>();
+        dwellTime= new LinkedList<>();
+        processTime= new LinkedList<>();
+        waitingTime= new LinkedList<>();
+    }
 
 
     /**
@@ -218,12 +259,35 @@ public class SimulationManager {
         }else{
             System.out.println("current queue");
             for(ArrivingAtTheTestStation event: queue){
-                System.out.println(event.getTimeToSpentOnTesting()+":");
+                System.out.println(event.getTimeToSpendOnTesting()+":");
             }
         }
 
 
     }
+    public static void printMultiQueueTimeStamps(){
+        if(currentQueueType== AllComparators.QueueType.FIFO||currentQueueType== AllComparators.QueueType.LIFO){
+            System.out.println("current multi queue: <CarID:timestampOfExecution");
+            for (Integer key: multiQueue.keySet()) {
+                System.out.print("Server "+key + ": ");
+                for (ArrivingAtTheTestStation event : multiQueue.get(key)) {
+                    System.out.print("<"+ event.getCarID() + ":" + event.getTimestampOfExecution() + "> ;");
+                }
+                System.out.println();
+            }
 
+        }else{
+            System.out.println("current multi queue: <CarID:TimeToSpendOnTesting>");
+            for (Integer key: multiQueue.keySet()) {
+                System.out.print("Server "+key + ": ");
+                for (ArrivingAtTheTestStation event : multiQueue.get(key)) {
+                    System.out.print("<"+ event.getCarID() + ":" + event.getTimeToSpendOnTesting() + "> ;");
+                }
+                System.out.println();
+            }
+        }
+
+
+    }
 
 }
