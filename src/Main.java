@@ -42,7 +42,7 @@ public class Main {
                     DataCollection.dataCollectorSingleValues.add(SimulationManager.getSingleRunData()+";"+ type.name());
                 }
 
-            //DataCollection.writeData();
+            DataCollection.writeData();
             //writeData();
         }else{
             throw new IllegalStateException("Could not generate Events for Simulation");
