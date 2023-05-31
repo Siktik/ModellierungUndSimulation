@@ -13,7 +13,7 @@ public class SimulationManager {
 
 
     /**
-     About the SimTime
+     About the SimTime: SimZeit ist um Faktor 100 schneller
      !!!!!  1 sec  ==    10 ms
      !!!!! 10 sec  ==   100 ms
      !!!!!  1 min  ==   600 ms

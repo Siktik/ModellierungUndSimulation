@@ -1,5 +1,6 @@
 package simManagement;
 
+import Utils.DataCollection;
 import Utils.TimeManager;
 import events.ArrivingAtTheTestStation;
 import events.Event;
@@ -44,6 +45,10 @@ public class Server {
                     SimulationManager.printQueueTimeStamps();
                     setServerState(ServerState.TESTING);
                     ArrivingAtTheTestStation arrivingAtTheTestStation= SimulationManager.queue.poll();
+                    System.out.println("Arrival Time: " + arrivingAtTheTestStation.getTimestampOfExecution());
+                    System.out.println("Current Time: " + TimeManager.getElapsedTimeInMilliSeconds());
+                    System.out.println("Testing Time: "+ arrivingAtTheTestStation.getTimeToSpendOnTesting());
+                    DataCollection.writeLogEntry(arrivingAtTheTestStation);
                     SimulationManager.waitingTime.add(TimeManager.getElapsedTimeInMilliSeconds()-arrivingAtTheTestStation.getTimestampOfExecution());
                     testingInformation= new Testing(TimeManager.getElapsedTimeInMilliSeconds(), arrivingAtTheTestStation.getCarID(), arrivingAtTheTestStation.getNumberOfPeopleInCar(), arrivingAtTheTestStation.getTimeToSpendOnTesting(), arrivingAtTheTestStation.getTimestampOfExecution());
                     System.out.println("Server" + id+" changes to Testing, took \n"+ arrivingAtTheTestStation+" \n from queue,  testing now for "+ testingInformation.getTimeToSpentOnTesting());
@@ -71,6 +76,8 @@ public class Server {
                     SimulationManager.printMultiQueueTimeStamps();
                     setServerState(ServerState.TESTING);
                     ArrivingAtTheTestStation arrivingAtTheTestStation= SimulationManager.multiQueue.get(this.id).poll();
+
+                    DataCollection.writeLogEntry(arrivingAtTheTestStation);
                     SimulationManager.waitingTime.add(TimeManager.getElapsedTimeInMilliSeconds()-arrivingAtTheTestStation.getTimestampOfExecution());
                     testingInformation= new Testing(TimeManager.getElapsedTimeInMilliSeconds(), arrivingAtTheTestStation.getCarID(), arrivingAtTheTestStation.getNumberOfPeopleInCar(), arrivingAtTheTestStation.getTimeToSpendOnTesting(), arrivingAtTheTestStation.getTimestampOfExecution());
                     System.out.println("Server" + id+" changes to Testing, took \n"+ arrivingAtTheTestStation+" \n from queue,  testing now for "+ testingInformation.getTimeToSpentOnTesting());

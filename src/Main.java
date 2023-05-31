@@ -3,6 +3,7 @@ import Utils.DataCollection;
 import events.ArrivingAtTheTestStation;
 import simManagement.SimulationManager;
 
+import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,22 +28,29 @@ public class Main {
 
     public static void main(String[] args) {
 
-
+        int runId = 0;
         SimulationManager.generateEvents();
 
         if(SimulationManager.isGeneratedEvents()){
             /// start
-                Map<AllComparators.QueueType, Comparator<ArrivingAtTheTestStation>> allComparators= AllComparators.getAllComparators();
-                for(AllComparators.QueueType type:allComparators.keySet()) {
-                    System.out.println("Starting new Run \n" +
-                            "Queue Type is "+ type.name());
-                    SimulationManager.setupSingleQueueRun(allComparators.get(type), type);
-                    SimulationManager.run();
-                    DataCollection.dataCollectorLogs.addAll(SimulationManager.getSingleRunDataLogs());
-                    DataCollection.dataCollectorSingleValues.add(SimulationManager.getSingleRunData()+";"+ type.name());
-                }
+            Map<AllComparators.QueueType, Comparator<ArrivingAtTheTestStation>> allComparators= AllComparators.getAllComparators();
+            SimulationManager.setupSingleQueueRun(allComparators.get(AllComparators.QueueType.SPT), AllComparators.QueueType.SPT);
+            SimulationManager.run();
+            DataCollection.writeData(""+ runId, ""+ AllComparators.QueueType.SPT);
 
-            DataCollection.writeData();
+
+            for(AllComparators.QueueType type:allComparators.keySet()) {
+                runId++;
+                System.out.println("Starting new Run \n" +
+                        "Queue Type is "+ type.name());
+                SimulationManager.setupSingleQueueRun(allComparators.get(type), type);
+                SimulationManager.run();
+                DataCollection.writeData(""+ runId, ""+type);
+            }
+
+
+
+            //DataCollection.writeData();
             //writeData();
         }else{
             throw new IllegalStateException("Could not generate Events for Simulation");
