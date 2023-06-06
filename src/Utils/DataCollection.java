@@ -31,7 +31,7 @@ public class DataCollection {
     public static void initWriter(){
         try {
 
-            logWriter.write("runID;QueueType;Avg WaitTime;Standard Deviation; Avg ProcessingTime;Standard Deviation; Avg. DwellTime;Standard Deviation\n");
+            logWriter.write("runID;QueueType;Avg WaitTime;Avg ProcessingTime;Avg. DwellTime;\n");
         }catch (IOException e){
             e.printStackTrace();
         }

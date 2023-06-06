@@ -29,14 +29,20 @@ public class Main {
     public static void main(String[] args) {
 
         int runId = 0;
+        DataCollection.initWriter();
         SimulationManager.generateEvents();
 
         if(SimulationManager.isGeneratedEvents()){
             /// start
             Map<AllComparators.QueueType, Comparator<ArrivingAtTheTestStation>> allComparators= AllComparators.getAllComparators();
+
+            /*
             SimulationManager.setupSingleQueueRun(allComparators.get(AllComparators.QueueType.SPT), AllComparators.QueueType.SPT);
             SimulationManager.run();
             DataCollection.writeData(""+ runId, ""+ AllComparators.QueueType.SPT);
+
+
+             */
 
 
             for(AllComparators.QueueType type:allComparators.keySet()) {
@@ -55,6 +61,7 @@ public class Main {
         }else{
             throw new IllegalStateException("Could not generate Events for Simulation");
         }
+        DataCollection.closeWriter();
 
 
 
