@@ -55,15 +55,10 @@ public class DataCollection {
 
 
             long avgWaitTime = 0;
-            double sdWaitTime = 0;
-
 
             long avgProcessingTime = 0;
-            double sdProcessingTime = 0;
 
             long avgDwellTime = 0;
-            double sdDwellTime = 0;
-
 
             for (int i = 0; i < waitTimeLogs.size(); i++) {
                 avgWaitTime += Long.parseLong(waitTimeLogs.get(i));
@@ -76,59 +71,9 @@ public class DataCollection {
 
             logWriter.write(runId + ";" + queueType + ";"+  avgWaitTime + ";"+ avgProcessingTime + ";"  + avgDwellTime+"\n");
 
-            /*
-            for (int i = 0; i < waitTimeLogs.size(); i++) {
-                sdWaitTime += Math.pow(Long.parseLong(waitTimeLogs.get(i))- avgWaitTime, 2);
-                sdProcessingTime += Math.pow(Long.parseLong(processingTimeLogs.get(i))- avgProcessingTime, 2);
-                sdDwellTime += Math.pow(Long.parseLong(dwellTimeLogs.get(i))- avgDwellTime, 2);
-            }
-            sdWaitTime = Math.sqrt(sdWaitTime/waitTimeLogs.size()-1);
-            sdProcessingTime = Math.sqrt(sdProcessingTime/processingTimeLogs.size()-1);
-            sdDwellTime = Math.sqrt(sdDwellTime/dwellTimeLogs.size()-1);
 
-            logWriter.write(runId + ";" + queueType + ";"+  avgWaitTime + ";"+ sdWaitTime + ";" + avgProcessingTime + ";" + sdProcessingTime + ";" + avgDwellTime+ ";" +  sdDwellTime+"\n");
-
-
-             */
             clearLogCollection();
 
-            /*
-            File simDataTestingLane = new File("SimDataTestingLane.csv");
-            FileWriter writerTestingLane = new FileWriter(simDataTestingLane, false);
-
-
-            System.out.println(dataCollectorAmountOfVehicleInTestingLane.size());
-            for (String string : dataCollectorAmountOfVehicleInTestingLane) {
-                writerTestingLane.write(string + "\n");
-            }
-            writerTestingLane.close();
-
-
-            File simDataDwellTime = new File("SimDataDwellTime.csv");
-            FileWriter writerDwellTime = new FileWriter(simDataDwellTime, false);
-            System.out.println(dataCollectorDwellTime.size());
-            for (String string : dataCollectorDwellTime) {
-                writerDwellTime.write(string + "\n");
-            }
-            writerDwellTime.close();
-
-            File simDataValues = new File("SimDataValues.csv");
-            FileWriter writerValues = new FileWriter(simDataValues, false);
-            System.out.println(dataCollectorSingleValues.size());
-            for (String string : dataCollectorSingleValues) {
-                writerValues.write(string + "\n");
-            }
-            writerValues.close();
-
-            File file = new File("SimDataLogs.csv");
-            FileWriter writerLogs = new FileWriter(file, false);
-            System.out.println(dataCollectorLogs.size());
-            for (String string : dataCollectorLogs) {
-                writerLogs.write(string + "\n");
-            }
-            writerLogs.close();
-
-             */
 
         }catch (IOException ignored){
             ignored.printStackTrace();

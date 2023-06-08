@@ -217,7 +217,7 @@ public class SimulationManager {
     /**
      * Methoden die mit der Datenanalyse zusammenhängen
      *
-     * @return
+     *
      */
 
     public static List<String> getDwellTime() {

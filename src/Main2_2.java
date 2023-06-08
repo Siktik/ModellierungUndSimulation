@@ -28,19 +28,9 @@ public class Main2_2 {
 
                 DataCollection.writeData(""+ (++runId), ""+type);
             }
-
-
-            //DataCollection.writeData();
         }else{
             throw new IllegalStateException("Could not generate Events for Simulation");
-            }
+        }
         DataCollection.closeWriter();
-
-
-
-
-
-
-
     }
 }

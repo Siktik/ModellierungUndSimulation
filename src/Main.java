@@ -18,13 +18,6 @@ public class Main {
      * Maywald Moritz, 1358960
      * Späth Maximilian, 1456880
      */
-/*
-    static List<String> dataCollectorLogs= new LinkedList<>();
-    static List<String> dataCollectorSingleValues= new LinkedList<>();
-    static List<String> dataCollectorDwellTime= new LinkedList<>();
-    static List<String> dataCollectorAmountOfVehicleInTestingLane= new LinkedList<>();
-
- */
 
     public static void main(String[] args) {
 
@@ -35,16 +28,6 @@ public class Main {
         if(SimulationManager.isGeneratedEvents()){
             /// start
             Map<AllComparators.QueueType, Comparator<ArrivingAtTheTestStation>> allComparators= AllComparators.getAllComparators();
-
-            /*
-            SimulationManager.setupSingleQueueRun(allComparators.get(AllComparators.QueueType.SPT), AllComparators.QueueType.SPT);
-            SimulationManager.run();
-            DataCollection.writeData(""+ runId, ""+ AllComparators.QueueType.SPT);
-
-
-             */
-
-
             for(AllComparators.QueueType type:allComparators.keySet()) {
                 runId++;
                 System.out.println("Starting new Run \n" +
@@ -53,22 +36,9 @@ public class Main {
                 SimulationManager.run();
                 DataCollection.writeData(""+ runId, ""+type);
             }
-
-
-
-            //DataCollection.writeData();
-            //writeData();
         }else{
             throw new IllegalStateException("Could not generate Events for Simulation");
         }
         DataCollection.closeWriter();
-
-
-
     }
-
-
-
-
-
 }
