@@ -110,8 +110,13 @@ public class SimulationManager {
             if(allArrivalEvents.get(0).getTimestampOfExecution()< TimeManager.getElapsedTimeInMilliSeconds()){
 
 
-                System.out.println("Calculating Modulo between numofevents " + allArrivalEvents.get(0).getCarID() +  " and server count " + allServers.size());
-                int targetQueue = allArrivalEvents.get(0).getCarID() % allServers.size();
+                // Instead of finding next queue in predetermined order, find the smallest queue.
+                int targetQueue = 0;
+                for (Integer key : multiQueue.keySet()){
+                    if(multiQueue.get(key).size() < multiQueue.get(targetQueue).size()){
+                        targetQueue = key;
+                        }
+                }
                 System.out.println("targetQueue: carID: "+ allArrivalEvents.get(0).getCarID() + ": target server: " + targetQueue);
 
                 multiQueue.get(targetQueue).add(allArrivalEvents.remove(0));
@@ -120,7 +125,7 @@ public class SimulationManager {
     }
 
     private static AllComparators.QueueType currentQueueType;
-    /**
+     /**
      * wird von der main aus vor jedem Simulationsdurchlauf aufgerufen
      * Reset/Setup Funktion
      */

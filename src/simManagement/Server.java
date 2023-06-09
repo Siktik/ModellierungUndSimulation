@@ -71,6 +71,9 @@ public class Server {
     public void evaluateCurrentStateMQ(){
         switch (serverState){
             case IDLE -> {
+
+
+
                 if(!SimulationManager.multiQueue.get(this.id).isEmpty()){
 
                     SimulationManager.printMultiQueueTimeStamps();
@@ -81,6 +84,10 @@ public class Server {
                     SimulationManager.waitingTime.add(TimeManager.getElapsedTimeInMilliSeconds()-arrivingAtTheTestStation.getTimestampOfExecution());
                     testingInformation= new Testing(TimeManager.getElapsedTimeInMilliSeconds(), arrivingAtTheTestStation.getCarID(), arrivingAtTheTestStation.getNumberOfPeopleInCar(), arrivingAtTheTestStation.getTimeToSpendOnTesting(), arrivingAtTheTestStation.getTimestampOfExecution());
                     System.out.println("Server" + id+" changes to Testing, took \n"+ arrivingAtTheTestStation+" \n from queue,  testing now for "+ testingInformation.getTimeToSpentOnTesting());
+                }else{
+                    for (Integer key: SimulationManager.multiQueue.keySet()){
+
+                    }
                 }
             }
             case TESTING -> {
