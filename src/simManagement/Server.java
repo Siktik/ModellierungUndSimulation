@@ -73,10 +73,10 @@ public class Server {
             case IDLE -> {
 
 
-
                 if(!SimulationManager.multiQueue.get(this.id).isEmpty()){
-
                     SimulationManager.printMultiQueueTimeStamps();
+                    System.err.println("SERVER " + this.id + " IS WORKING ON OWN QUEUE");
+
                     setServerState(ServerState.TESTING);
                     ArrivingAtTheTestStation arrivingAtTheTestStation= SimulationManager.multiQueue.get(this.id).poll();
 
@@ -84,8 +84,25 @@ public class Server {
                     SimulationManager.waitingTime.add(TimeManager.getElapsedTimeInMilliSeconds()-arrivingAtTheTestStation.getTimestampOfExecution());
                     testingInformation= new Testing(TimeManager.getElapsedTimeInMilliSeconds(), arrivingAtTheTestStation.getCarID(), arrivingAtTheTestStation.getNumberOfPeopleInCar(), arrivingAtTheTestStation.getTimeToSpendOnTesting(), arrivingAtTheTestStation.getTimestampOfExecution());
                     System.out.println("Server" + id+" changes to Testing, took \n"+ arrivingAtTheTestStation+" \n from queue,  testing now for "+ testingInformation.getTimeToSpentOnTesting());
-                }else{
-                    for (Integer key: SimulationManager.multiQueue.keySet()){
+                }else {
+                    //System.err.println("SERVER " + this.id + " IS CHECKING OTHER QUEUES");
+                    int longestQueueID = this.id;
+                    for (Integer key : SimulationManager.multiQueue.keySet()) {
+                        if (!SimulationManager.multiQueue.get(key).isEmpty()) {
+                            if (SimulationManager.multiQueue.get(key).size() > SimulationManager.multiQueue.get(longestQueueID).size()) {
+                                longestQueueID = key;
+                            }
+                        }
+                    }
+
+                    if (!(longestQueueID == this.id)) {
+                        setServerState(ServerState.TESTING);
+                        ArrivingAtTheTestStation arrivingAtTheTestStation = SimulationManager.multiQueue.get(longestQueueID).poll();
+                        DataCollection.writeLogEntry(arrivingAtTheTestStation);
+                        System.err.println("TAKING CAR FROM DIFFERENT QUEUE: SERVER "+ this.id + " FROM QUEUE "+longestQueueID);
+                        SimulationManager.waitingTime.add(TimeManager.getElapsedTimeInMilliSeconds() - arrivingAtTheTestStation.getTimestampOfExecution());
+                        testingInformation = new Testing(TimeManager.getElapsedTimeInMilliSeconds(), arrivingAtTheTestStation.getCarID(), arrivingAtTheTestStation.getNumberOfPeopleInCar(), arrivingAtTheTestStation.getTimeToSpendOnTesting(), arrivingAtTheTestStation.getTimestampOfExecution());
+                        System.out.println("Server" + id + " changes to Testing, took \n" + arrivingAtTheTestStation + " \n from queue,  testing now for " + testingInformation.getTimeToSpentOnTesting());
 
                     }
                 }

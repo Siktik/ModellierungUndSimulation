@@ -110,6 +110,7 @@ public class SimulationManager {
             if(allArrivalEvents.get(0).getTimestampOfExecution()< TimeManager.getElapsedTimeInMilliSeconds()){
 
 
+
                 // Instead of finding next queue in predetermined order, find the smallest queue.
                 int targetQueue = 0;
                 for (Integer key : multiQueue.keySet()){
@@ -117,8 +118,7 @@ public class SimulationManager {
                         targetQueue = key;
                         }
                 }
-                System.out.println("targetQueue: carID: "+ allArrivalEvents.get(0).getCarID() + ": target server: " + targetQueue);
-
+                System.out.println("targetQueue: " + targetQueue  + " carID: "+ allArrivalEvents.get(0).getCarID() + ": target server: " + targetQueue);
                 multiQueue.get(targetQueue).add(allArrivalEvents.remove(0));
             }
         }
