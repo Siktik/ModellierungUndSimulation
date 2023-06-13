@@ -2,7 +2,8 @@ package events;
 
 
 /**
- * Basic Event parent class. All Events consist of an ID, an arrival timeStamp, and the amount of People in the Car.
+ * Basic Event parent class. All Events consist of an ID, an arrival timeStamp (i.e. when the car is supposed to arrive,
+ * not when this event is created), and the amount of People in the Car.
  */
 public class Event {
 
