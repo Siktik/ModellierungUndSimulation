@@ -92,6 +92,7 @@ public class DataCollection {
      *                     DwellTime = WaitTime + ProcessingTime
      */
     public static void writeLogEntry(ArrivingAtTheTestStation arrivalEvent){
+
         String waitTime = String.valueOf(TimeManager.getElapsedTimeInMilliSeconds() - arrivalEvent.getTimestampOfExecution());
         String processingTime = String.valueOf(arrivalEvent.getTimeToSpendOnTesting());
         String dwellTime = String.valueOf(Long.parseLong(waitTime)+ Long.parseLong(processingTime));

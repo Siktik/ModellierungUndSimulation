@@ -44,9 +44,6 @@ public class SimulationManager {
     /**
      * Method providing main simulation functionality. Runs until all events are processed.
      * In each iteration, checks if new events are available based on their arrival time and the current simulation time.
-     * Hauptmethode
-     * wird von der main aus gestartet -> läuft bis alle Events der eventList abgearbeitet wurden
-     *
      */
     public static void run(){
         System.out.println("____________________________________\nTimeStamp___CarID___EventType___#CarsInTheSystem\n____________________________________");
