@@ -1,9 +1,10 @@
 package events;
 
-import Utils.TimeManager;
 
-import java.util.PriorityQueue;
-
+/**
+ * Basic Event parent class. All Events consist of an ID, an arrival timeStamp (i.e. when the car is supposed to arrive,
+ * not when this event is created), and the amount of People in the Car.
+ */
 public class Event {
 
     private long timestampOfExecution;
@@ -18,38 +19,6 @@ public class Event {
         this.eventClass=eventClass;
         //System.out.println(this);
     }
-
-
-    /*
-    Relikt aus Aufgabe 1
-    nichtmehr benötigt für Aufgabe 2, da keine eventList verwendet wird wie in Aufgabe 1
-    queue verwaltet Arriving Events -> Server pullt arriving Events -> erstellt Leaving The Station und führt aus wenn fertig
-    getestet
-    public PriorityQueue<Event> processEvent(PriorityQueue<Event> eventList) throws IllegalStateException{
-
-        if(eventClass.isAssignableFrom(ArrivingAtTheTestStation.class)){
-
-            ArrivingAtTheTestStation arrivingAtTheTestStation= (ArrivingAtTheTestStation) this;
-            return arrivingAtTheTestStation.process(eventList);
-
-        }else if(eventClass.isAssignableFrom(Testing.class)){
-
-
-            Testing testing= (Testing) this;
-            return testing.process(eventList);
-
-        }else if(eventClass.isAssignableFrom(LeavingTheStation.class)){
-
-            LeavingTheStation leavingTheStation= (LeavingTheStation) this;
-            return leavingTheStation.process(eventList);
-
-        }else{
-            throw new IllegalStateException("The EventClass you want to process is not defined");
-        }
-
-    }
-    */
-
 
     @Override
     public String toString() {

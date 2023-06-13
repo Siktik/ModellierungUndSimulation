@@ -5,6 +5,10 @@ import events.ArrivingAtTheTestStation;
 import java.util.Comparator;
 import java.util.Map;
 
+/**
+ * All Comparators used in the PriorityQueues. Queues are initialized by passing a Comparator, the Simulation gets the
+ * current Comparator according the the simulation configuration from here.
+ */
 public class AllComparators {
 
 
