@@ -98,8 +98,8 @@ public class Server {
 
                     testingInformation= new Testing(TimeManager.getElapsedTimeInMilliSeconds(), arrivingAtTheTestStation.getCarID(), arrivingAtTheTestStation.getNumberOfPeopleInCar(), arrivingAtTheTestStation.getTimeToSpendOnTesting(), arrivingAtTheTestStation.getTimestampOfExecution());
                     System.out.println("Server" + id+" changes to Testing, took \n"+ arrivingAtTheTestStation+" \n from queue,  testing now for "+ testingInformation.getTimeToSpentOnTesting());
+                //If Own queue is empty, get an event from the currently longest queue.
                 }else {
-                    //System.err.println("SERVER " + this.id + " IS CHECKING OTHER QUEUES");
                     int longestQueueID = this.id;
                     for (Integer key : SimulationManager.multiQueue.keySet()) {
                         if (!SimulationManager.multiQueue.get(key).isEmpty()) {
@@ -114,7 +114,6 @@ public class Server {
                         ArrivingAtTheTestStation arrivingAtTheTestStation = SimulationManager.multiQueue.get(longestQueueID).poll();
                         DataCollection.writeLogEntry(arrivingAtTheTestStation);
                         System.err.println("TAKING CAR FROM DIFFERENT QUEUE: SERVER "+ this.id + " FROM QUEUE "+longestQueueID);
-                        SimulationManager.waitingTime.add(TimeManager.getElapsedTimeInMilliSeconds() - arrivingAtTheTestStation.getTimestampOfExecution());
                         testingInformation = new Testing(TimeManager.getElapsedTimeInMilliSeconds(), arrivingAtTheTestStation.getCarID(), arrivingAtTheTestStation.getNumberOfPeopleInCar(), arrivingAtTheTestStation.getTimeToSpendOnTesting(), arrivingAtTheTestStation.getTimestampOfExecution());
                         System.out.println("Server" + id + " changes to Testing, took \n" + arrivingAtTheTestStation + " \n from queue,  testing now for " + testingInformation.getTimeToSpentOnTesting());
 
