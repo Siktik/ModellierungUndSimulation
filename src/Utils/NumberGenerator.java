@@ -1,7 +1,6 @@
 package Utils;
 
 import java.security.SecureRandom;
-import java.util.Random;
 
 public class NumberGenerator {
 

@@ -7,6 +7,9 @@ import events.Event;
 import events.LeavingTheStation;
 import events.Testing;
 
+/**
+ * Class for the servers performing the tests at the station. The same Server class is used for Single- and Multi-Queue.
+ */
 public class Server {
 
     Testing testingInformation;
@@ -37,6 +40,11 @@ public class Server {
         this.testingInformation = testingInformation;
     }
 
+    /**
+     * Main functionality of the servers. Servers are either idle or testing. If idle, check queue for waiting cars and remove
+     * the first if present. Set server state to TESTING, prepare logdata and proces the event.
+     * If a server is Testing, he will continue to do so until the events processing time has passed.
+     */
     public void evaluateCurrentState(){
         switch (serverState){
             case IDLE -> {
@@ -48,8 +56,11 @@ public class Server {
                     System.out.println("Arrival Time: " + arrivingAtTheTestStation.getTimestampOfExecution());
                     System.out.println("Current Time: " + TimeManager.getElapsedTimeInMilliSeconds());
                     System.out.println("Testing Time: "+ arrivingAtTheTestStation.getTimeToSpendOnTesting());
+
+                    // ArrivingAtTheStation event is all that is needed to write the entore log including waiting,
+                    // processing and dwell time
                     DataCollection.writeLogEntry(arrivingAtTheTestStation);
-                    SimulationManager.waitingTime.add(TimeManager.getElapsedTimeInMilliSeconds()-arrivingAtTheTestStation.getTimestampOfExecution());
+
                     testingInformation= new Testing(TimeManager.getElapsedTimeInMilliSeconds(), arrivingAtTheTestStation.getCarID(), arrivingAtTheTestStation.getNumberOfPeopleInCar(), arrivingAtTheTestStation.getTimeToSpendOnTesting(), arrivingAtTheTestStation.getTimestampOfExecution());
                     System.out.println("Server" + id+" changes to Testing, took \n"+ arrivingAtTheTestStation+" \n from queue,  testing now for "+ testingInformation.getTimeToSpentOnTesting());
                 }
@@ -61,13 +72,16 @@ public class Server {
 
                     LeavingTheStation leavingTheStation= new LeavingTheStation(TimeManager.getElapsedTimeInMilliSeconds(),
                             testingInformation.getCarID(),testingInformation.getNumberOfPeopleInCar(), true);
-                    SimulationManager.dwellTime.add(leavingTheStation.getTimestampOfExecution()- testingInformation.getTimeWhenJoinedQueue());
                     leavingTheStation.process();
 
                 }
             }
         }
     }
+
+    /**
+     * Same Method as above but for the MultiQueue implementation.
+     */
     public void evaluateCurrentStateMQ(){
         switch (serverState){
             case IDLE -> {
@@ -78,7 +92,7 @@ public class Server {
                     ArrivingAtTheTestStation arrivingAtTheTestStation= SimulationManager.multiQueue.get(this.id).poll();
 
                     DataCollection.writeLogEntry(arrivingAtTheTestStation);
-                    SimulationManager.waitingTime.add(TimeManager.getElapsedTimeInMilliSeconds()-arrivingAtTheTestStation.getTimestampOfExecution());
+
                     testingInformation= new Testing(TimeManager.getElapsedTimeInMilliSeconds(), arrivingAtTheTestStation.getCarID(), arrivingAtTheTestStation.getNumberOfPeopleInCar(), arrivingAtTheTestStation.getTimeToSpendOnTesting(), arrivingAtTheTestStation.getTimestampOfExecution());
                     System.out.println("Server" + id+" changes to Testing, took \n"+ arrivingAtTheTestStation+" \n from queue,  testing now for "+ testingInformation.getTimeToSpentOnTesting());
                 }
@@ -90,7 +104,7 @@ public class Server {
 
                     LeavingTheStation leavingTheStation= new LeavingTheStation(TimeManager.getElapsedTimeInMilliSeconds(),
                             testingInformation.getCarID(),testingInformation.getNumberOfPeopleInCar(), true);
-                    SimulationManager.dwellTime.add(leavingTheStation.getTimestampOfExecution()- testingInformation.getTimeWhenJoinedQueue());
+
                     leavingTheStation.process();
 
                 }

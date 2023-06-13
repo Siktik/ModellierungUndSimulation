@@ -2,14 +2,7 @@ import Utils.AllComparators;
 import Utils.DataCollection;
 import events.ArrivingAtTheTestStation;
 import simManagement.SimulationManager;
-
-import javax.xml.crypto.Data;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class Main {
@@ -18,50 +11,34 @@ public class Main {
      * Maywald Moritz, 1358960
      * Späth Maximilian, 1456880
      */
-/*
-    static List<String> dataCollectorLogs= new LinkedList<>();
-    static List<String> dataCollectorSingleValues= new LinkedList<>();
-    static List<String> dataCollectorDwellTime= new LinkedList<>();
-    static List<String> dataCollectorAmountOfVehicleInTestingLane= new LinkedList<>();
 
- */
-
+    /**
+     * Main Method for exercise 2.1
+     * All Events are generated beforehand to run the simulation once for
+     * each queueing streategy with the same events.
+     *
+     */
     public static void main(String[] args) {
 
         int runId = 0;
         SimulationManager.generateEvents();
-
+        DataCollection.initWriter();
         if(SimulationManager.isGeneratedEvents()){
             /// start
             Map<AllComparators.QueueType, Comparator<ArrivingAtTheTestStation>> allComparators= AllComparators.getAllComparators();
-            SimulationManager.setupSingleQueueRun(allComparators.get(AllComparators.QueueType.SPT), AllComparators.QueueType.SPT);
-            SimulationManager.run();
-            DataCollection.writeData(""+ runId, ""+ AllComparators.QueueType.SPT);
-
 
             for(AllComparators.QueueType type:allComparators.keySet()) {
-                runId++;
+
                 System.out.println("Starting new Run \n" +
                         "Queue Type is "+ type.name());
                 SimulationManager.setupSingleQueueRun(allComparators.get(type), type);
                 SimulationManager.run();
-                DataCollection.writeData(""+ runId, ""+type);
+                DataCollection.writeData(""+ (++runId), ""+type);
+
             }
-
-
-
-            //DataCollection.writeData();
-            //writeData();
         }else{
             throw new IllegalStateException("Could not generate Events for Simulation");
         }
-
-
-
+        DataCollection.closeWriter();
     }
-
-
-
-
-
 }
